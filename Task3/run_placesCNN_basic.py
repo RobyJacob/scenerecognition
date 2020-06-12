@@ -13,7 +13,7 @@ from torch.nn import functional as F
 import os
 from PIL import Image
 
-# th architecture to use
+# architecture to use
 arch = 'resnet18'
 
 # load the pre-trained weights
@@ -30,6 +30,7 @@ model.eval()
 
 
 # load the image transformer
+# preprocess image to fit the model
 centre_crop = trn.Compose([
         trn.Resize((256,256)),
         trn.CenterCrop(224),
@@ -37,7 +38,7 @@ centre_crop = trn.Compose([
         trn.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-# load the class label
+# load the class label list
 file_name = 'categories_places365.txt'
 if not os.access(file_name, os.W_OK):
     synset_url = 'https://raw.githubusercontent.com/csailvision/places365/master/categories_places365.txt'
@@ -49,13 +50,8 @@ with open(file_name) as class_file:
 classes = tuple(classes)
 
 # load the test image
-#img_name = '12.jpg'
-#if not os.access(img_name, os.W_OK):
-#    img_url = 'http://places.csail.mit.edu/demo/' + img_name
-#    os.system('wget ' + img_url)
-
-img = Image.open('./12.jpg')
-plt.imshow(img); plt.show()
+img = Image.open('test2.jpg')
+# plt.imshow(img); plt.show()
 input_img = V(centre_crop(img).unsqueeze(0))
 
 
@@ -64,6 +60,8 @@ logit = model.forward(input_img)
 h_x = F.softmax(logit,1).data.squeeze()
 probs, idx = h_x.sort(0, True)
 max_prob_id = torch.argmax(probs)
+
+# display accuracy
 print(probs[max_prob_id].item(), classes[idx[max_prob_id]])
 
 #print('{} prediction on {}'.format(arch,img_name))
