@@ -14,7 +14,7 @@ import os
 from PIL import Image
 
 # architecture to use
-arch = 'resnet18'
+arch = 'resnet50'
 
 # load the pre-trained weights
 model_file = '%s_places365.pth.tar' % arch
@@ -50,7 +50,7 @@ with open(file_name) as class_file:
 classes = tuple(classes)
 
 # load the test image
-img = Image.open('test2.jpg')
+img = Image.open('test3.jpg')
 # plt.imshow(img); plt.show()
 input_img = V(centre_crop(img).unsqueeze(0))
 
